@@ -82,7 +82,7 @@ public class HKBCPageProcessor implements PageProcessor {
         Spider.create(new HKBCPageProcessor())
                 .addUrl("http://www.hkbbcc.xyz/forum-20-1.html")
                 .setScheduler(new FileCacheQueueScheduler("./filecache/"))
-                .addPipeline(new FilePipeline("./spresult/"))
+//                .addPipeline(new FilePipeline("./spresult/"))
                 .addPipeline(new HKssxsTopicsPipLine())
                 .thread(1)
                 .run();
