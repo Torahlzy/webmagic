@@ -24,7 +24,7 @@ public class HKssxsPcTopic {
         return new HKssxsPcTopic();
     }
 
-    private HKssxsPcTopic() {
+    public HKssxsPcTopic() {
     }
 
     @Override

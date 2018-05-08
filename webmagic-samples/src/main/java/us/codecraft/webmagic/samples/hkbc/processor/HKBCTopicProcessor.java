@@ -1,15 +1,11 @@
-package us.codecraft.webmagic.samples.hkbc;
+package us.codecraft.webmagic.samples.hkbc.processor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
-import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.pipeline.FilePipeline;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.hkbc.model.HKssxsPcTopic;
-import us.codecraft.webmagic.samples.hkbc.pipline.HKssxsTopicsPipLine;
-import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
@@ -19,8 +15,8 @@ import java.util.List;
  * @author code4crafter@gmail.com <br>
  * @since 0.5.1
  */
-public class HKBCPageProcessor implements PageProcessor {
-    public static final Logger logger = LoggerFactory.getLogger(HKBCPageProcessor.class);
+public class HKBCTopicProcessor implements PageProcessor {
+    public static final Logger logger = LoggerFactory.getLogger(HKBCTopicProcessor.class);
 
     private Site site = Site.me().setRetryTimes(3).setSleepTime(1000);
 
@@ -33,7 +29,10 @@ public class HKBCPageProcessor implements PageProcessor {
         logger.info("找到主题 {} 个", (topics_url != null ? topics_url.size() : 0));
 //        githubRepo.setName(page.getHtml().xpath("//h1[contains(@class, 'entry-title') and contains(@class, 'public')]/strong/a/text()").toString());
 //        githubRepo.setReadme(page.getHtml().xpath("//div[@id='readme']/tidyText()").toString());
+        parserTopic(page, topics_title, topics_url);
+    }
 
+    protected void parserTopic(Page page, List<String> topics_title, List<String> topics_url) {
         if (topics_url != null && topics_url.size() > 0) {
             List<HKssxsPcTopic> topicsList = new ArrayList<HKssxsPcTopic>(topics_url.size());
             for (int i = 0; i < topics_url.size(); i++) {
@@ -72,19 +71,10 @@ public class HKBCPageProcessor implements PageProcessor {
                 .addHeader("Accept-Language","zh-CN,zh;q=0.9")
                 .addHeader("Cache-Control","max-age=0")
                 .addHeader("Connection","keep-alive")
-                .addHeader("Host","www.hkbbcc.xyz")
-                .addHeader("Referer","http://www.hkbbcc.xyz/forum-20-3.html");
+                .addHeader("Host","www.hkbbcc.xyz");
+//                .addHeader("Referer","http://www.hkbbcc.xyz/forum-20-3.html");
 
         return site;
     }
 
-    public static void main(String[] args) {
-        Spider.create(new HKBCPageProcessor())
-                .addUrl("http://www.hkbbcc.xyz/forum-20-1.html")
-                .setScheduler(new FileCacheQueueScheduler("./filecache/"))
-//                .addPipeline(new FilePipeline("./spresult/"))
-                .addPipeline(new HKssxsTopicsPipLine())
-                .thread(1)
-                .run();
-    }
 }
