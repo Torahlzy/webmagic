@@ -41,7 +41,7 @@ public class HKBCPic_TopicProcessor implements PageProcessor {
                 hKssxsTopic.setTitle(topics_title.get(i).trim());
                 topicsList.add(hKssxsTopic);
             }
-            page.putField("pc_sstt_topic_List", topicsList);
+            page.putField("topic", topicsList);
         } else {
             page.setSkip(true);
         }

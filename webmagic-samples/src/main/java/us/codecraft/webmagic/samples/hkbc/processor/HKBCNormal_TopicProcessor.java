@@ -39,7 +39,7 @@ public class HKBCNormal_TopicProcessor implements PageProcessor {
                 hKssxsTopic.setTitle(topics_title.get(i).trim());
                 topicsList.add(hKssxsTopic);
             }
-            page.putField("pc_ssxs_topic_List", topicsList);
+            page.putField("topic", topicsList);
         } else {
             page.setSkip(true);
         }

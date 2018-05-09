@@ -15,6 +15,9 @@ public class HKMainStart {
         spSSTTTopic();
     }
 
+    /**
+     * 色色贴图主题
+     */
     private static void spSSTTTopic() {
         Spider.create(new HKBCPic_TopicProcessor())
                 .addUrl("http://www.hkbbcc.xyz/forum.php?mod=forumdisplay&fid=18&page=1")
@@ -25,6 +28,15 @@ public class HKMainStart {
                 .run();
     }
 
+    public static void spSSTTContentPic(){
+
+
+    }
+
+
+    /**
+     * 色色小说主题
+     */
     private static void spSSXSTopic() {
         Spider.create(new HKBCNormal_TopicProcessor())
                 .addUrl("http://www.hkbbcc.xyz/forum-20-1.html")
@@ -35,6 +47,9 @@ public class HKMainStart {
                 .run();
     }
 
+    /**
+     * h-game主题
+     */
     private static void spHGameTopic() {
         Spider.create(new HKBCNormal_TopicProcessor())
                 .addUrl("http://www.hkbbcc.xyz/forum-42-1.html")

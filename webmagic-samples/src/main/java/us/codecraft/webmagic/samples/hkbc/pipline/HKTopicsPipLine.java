@@ -10,7 +10,7 @@ import java.util.List;
 public  abstract  class HKTopicsPipLine<T> implements Pipeline {
     @Override
     public void process(ResultItems resultItems, Task task) {
-        List<T> pc_ssxs_topic_list = (List<T>) resultItems.get("pc_ssxs_topic_List");
+        List<T> pc_ssxs_topic_list = (List<T>) resultItems.get("topic");
         if (pc_ssxs_topic_list == null || pc_ssxs_topic_list.size() < 1) {
             HKBCNormal_TopicProcessor.logger.error("没有获得结果！{}" + resultItems.getRequest().getUrl());
             return;
