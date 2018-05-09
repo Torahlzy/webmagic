@@ -1,9 +1,10 @@
-package us.codecraft.webmagic.samples.hkbc.query;
+package us.codecraft.webmagic.samples.hkbc;
 
 import us.codecraft.webmagic.samples.hkbc.dao.HKDao;
 import us.codecraft.webmagic.samples.hkbc.model.Anode;
 import us.codecraft.webmagic.samples.hkbc.model.HKssxsPcTopic;
-import us.codecraft.webmagic.samples.hkbc.processor.HKBCTopicProcessor;
+import us.codecraft.webmagic.samples.hkbc.processor.HKBCNormal_TopicProcessor;
+import us.codecraft.webmagic.samples.hkbc.query.CreateResultXml;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ public class QureyMain {
         String keyword = "ntr";
         List<HKssxsPcTopic> resultList = HKDao.queryKeywordInSsxs(keyword);
         if (resultList == null || resultList.size() <= 0) {
-            HKBCTopicProcessor.logger.info("关键词 {} 没有结果", keyword);
+            HKBCNormal_TopicProcessor.logger.info("关键词 {} 没有结果", keyword);
             return;
         }
         List<Anode> list = new ArrayList<Anode>(resultList.size());

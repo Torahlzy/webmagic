@@ -2,7 +2,8 @@ package us.codecraft.webmagic.samples.hkbc.dao;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
-import us.codecraft.webmagic.samples.hkbc.processor.HKBCTopicProcessor;
+import us.codecraft.webmagic.samples.hkbc.model.HKssttPcTopic;
+import us.codecraft.webmagic.samples.hkbc.processor.HKBCNormal_TopicProcessor;
 import us.codecraft.webmagic.samples.hkbc.model.HKssxsPcTopic;
 
 import java.sql.SQLException;
@@ -17,7 +18,7 @@ public class HKDao {
      */
     public static void insertSsxsPcTopics(List<HKssxsPcTopic> list) {
         if (list == null || list.size() <= 0) {
-            HKBCTopicProcessor.logger.error("没有数据要保存 ：{}", list);
+            HKBCNormal_TopicProcessor.logger.error("没有数据要保存 ：{}", list);
             return;
         }
 
@@ -30,7 +31,7 @@ public class HKDao {
         }
         try {
             int[] batch = qr.batch(sql, params);
-            HKBCTopicProcessor.logger.info("插入结果：{}", Arrays.toString(batch));
+            HKBCNormal_TopicProcessor.logger.info("插入结果：{}", Arrays.toString(batch));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -43,7 +44,7 @@ public class HKDao {
      */
     public static void insertHGamePcTopics(List<HKssxsPcTopic> list) {
         if (list == null || list.size() <= 0) {
-            HKBCTopicProcessor.logger.error("没有数据要保存 ：{}", list);
+            HKBCNormal_TopicProcessor.logger.error("没有数据要保存 ：{}", list);
             return;
         }
 
@@ -56,7 +57,33 @@ public class HKDao {
         }
         try {
             int[] batch = qr.batch(sql, params);
-            HKBCTopicProcessor.logger.info("插入结果：{}", Arrays.toString(batch));
+            HKBCNormal_TopicProcessor.logger.info("插入结果：{}", Arrays.toString(batch));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * pc端色色贴图
+     *
+     * @param list
+     */
+    public static void insertSSTTPcTopics(List<HKssttPcTopic> list) {
+        if (list == null || list.size() <= 0) {
+            HKBCNormal_TopicProcessor.logger.error("没有数据要保存 ：{}", list);
+            return;
+        }
+
+        QueryRunner qr = new QueryRunner(Jdbcutils.getDataSource());
+        String sql = "insert into pc_sstt_topic (title,url) values(?,?)";
+        Object[][] params = new Object[list.size()][2];
+        for (int i = 0; i < list.size(); i++) {
+            params[i][0] = list.get(i).getTitle();
+            params[i][1] = list.get(i).getUrl();
+        }
+        try {
+            int[] batch = qr.batch(sql, params);
+            HKBCNormal_TopicProcessor.logger.info("插入结果：{}", Arrays.toString(batch));
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -15,8 +15,8 @@ import java.util.List;
  * @author code4crafter@gmail.com <br>
  * @since 0.5.1
  */
-public class HKBCTopicProcessor implements PageProcessor {
-    public static final Logger logger = LoggerFactory.getLogger(HKBCTopicProcessor.class);
+public class HKBCNormal_TopicProcessor implements PageProcessor {
+    public static final Logger logger = LoggerFactory.getLogger(HKBCNormal_TopicProcessor.class);
 
     private Site site = Site.me().setRetryTimes(3).setSleepTime(1000);
 
@@ -27,8 +27,6 @@ public class HKBCTopicProcessor implements PageProcessor {
         List<String> topics_title = page.getHtml().xpath("//*[@id=\"moderate\"]/table/tbody/tr/th/a/text()").all();
         List<String> topics_url = a_nodes.links().all();
         logger.info("找到主题 {} 个", (topics_url != null ? topics_url.size() : 0));
-//        githubRepo.setName(page.getHtml().xpath("//h1[contains(@class, 'entry-title') and contains(@class, 'public')]/strong/a/text()").toString());
-//        githubRepo.setReadme(page.getHtml().xpath("//div[@id='readme']/tidyText()").toString());
         parserTopic(page, topics_title, topics_url);
     }
 
@@ -72,7 +70,6 @@ public class HKBCTopicProcessor implements PageProcessor {
                 .addHeader("Cache-Control","max-age=0")
                 .addHeader("Connection","keep-alive")
                 .addHeader("Host","www.hkbbcc.xyz");
-//                .addHeader("Referer","http://www.hkbbcc.xyz/forum-20-3.html");
 
         return site;
     }
