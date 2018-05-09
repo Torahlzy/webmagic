@@ -69,7 +69,7 @@ public class HKDao {
         QueryRunner qr = new QueryRunner(Jdbcutils.getDataSource());
 
         //第二步：创建sql语句
-        String sql = "SELECT * FROM pc_ssxs_topic where title like concat('%','#" + key + "#','%')";
+        String sql = "SELECT * FROM pc_ssxs_topic where title like concat('%','" + key + "','%')";
 
         try {
             List<HKssxsPcTopic> result = qr.query(sql,

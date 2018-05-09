@@ -50,16 +50,11 @@ public class CreateResultXml {
         //增加结果
         for (int i = 0; i < alist.size(); i++) {
             Element a = document.createElement("a");
-            Element span = document.createElement("span");
             Anode anode = alist.get(i);
-            a.setTextContent(anode.innertext);
+            a.setTextContent((i + 1) + "." + anode.innertext);
             a.setAttribute("href", anode.url);
-            span.setTextContent("      ");
             body.appendChild(a);
-            body.appendChild(span);
-            if (i % 3 == 2) {
-                body.appendChild(document.createElement("br"));
-            }
+            body.appendChild(document.createElement("br"));
         }
         saveToFile(document, title);
     }
