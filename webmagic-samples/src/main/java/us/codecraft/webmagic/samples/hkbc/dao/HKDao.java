@@ -63,7 +63,7 @@ public class HKDao {
     }
 
 
-    public static List<HKssxsPcTopic> queryKeyword(String key) {
+    public static List<HKssxsPcTopic> queryKeywordInSsxs(String key) {
 
         //第一步：创建queryRunner对象，用来操作sql语句
         QueryRunner qr = new QueryRunner(Jdbcutils.getDataSource());
