@@ -1,18 +1,27 @@
 package us.codecraft.webmagic.samples.hkbc;
 
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.samples.hkbc.dao.HKDao;
+import us.codecraft.webmagic.samples.hkbc.model.HKssttPcTopic;
 import us.codecraft.webmagic.samples.hkbc.pipline.HKHGame_TopicsPipLine;
+import us.codecraft.webmagic.samples.hkbc.pipline.HKSSTT_ContentPipline;
 import us.codecraft.webmagic.samples.hkbc.pipline.HKSSTT_TopicsPipline;
 import us.codecraft.webmagic.samples.hkbc.pipline.HKSSXS_TopicsPipLine;
-import us.codecraft.webmagic.samples.hkbc.processor.HKBCPic_TopicProcessor;
 import us.codecraft.webmagic.samples.hkbc.processor.HKBCNormal_TopicProcessor;
+import us.codecraft.webmagic.samples.hkbc.processor.HKBCPic_TopicProcessor;
+import us.codecraft.webmagic.samples.hkbc.processor.HKSSTT_ContentProcessor;
 import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 
+import java.util.List;
+
 public class HKMainStart {
+    public static final String host = "http://www.hkbbcc.xyz/";
+
     public static void main(String[] args) {
 //        spSSXSTopic();
 //        spHGameTopic();
-        spSSTTTopic();
+//        spSSTTTopic();
+        spSSTTContentPic();
     }
 
     /**
@@ -28,8 +37,37 @@ public class HKMainStart {
                 .run();
     }
 
-    public static void spSSTTContentPic(){
+    /**
+     * 抓取图片
+     */
+    public static void spSSTTContentPic() {
+        //2720
+        for (int i = 0; i < 10; i++) {
+            int start = i  + 1;
+            int count = 1;
+            List<HKssttPcTopic> topicsSSTT = HKDao.getTopicsSSTT(start, count);
+            if (topicsSSTT == null || topicsSSTT.size() <= 0) {
+                MyLogger.logger.warn("[{},{})没有查询结果", start, (start + count));
+                continue;
+            }
+            MyLogger.logger.info("准备抓取主题个数 {} ", topicsSSTT.size());
+            String[] urls = new String[topicsSSTT.size()];
+            for (int j = 0; j < topicsSSTT.size(); j++) {
+                urls[j] = topicsSSTT.get(j).getUrl();
+            }
+            Spider.create(new HKSSTT_ContentProcessor())
+                    .addUrl(urls)
+                    .setScheduler(new FileCacheQueueScheduler("./filecache/ssttPic/"))
+                    .addPipeline(new HKSSTT_ContentPipline())
+                    .thread(1)
+                    .run();
 
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 

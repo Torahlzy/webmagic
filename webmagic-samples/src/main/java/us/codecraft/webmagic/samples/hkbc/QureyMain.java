@@ -12,6 +12,11 @@ import java.util.List;
 public class QureyMain {
 
     public static void main(String[] args) {
+        querySSXSKey();
+//        querySSTTTopicUrl();
+    }
+
+    private static void querySSXSKey() {
         String keyword = "ntr";
         List<HKssxsPcTopic> resultList = HKDao.queryKeywordInSsxs(keyword);
         if (resultList == null || resultList.size() <= 0) {
@@ -24,5 +29,10 @@ public class QureyMain {
         }
 
         CreateResultXml.createResult(list, keyword);
+    }
+
+    public static void querySSTTTopicUrl() {
+
+
     }
 }
