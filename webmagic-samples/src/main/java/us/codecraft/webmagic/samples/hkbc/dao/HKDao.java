@@ -2,6 +2,8 @@ package us.codecraft.webmagic.samples.hkbc.dao;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import us.codecraft.webmagic.samples.hkbc.MyLogger;
+import us.codecraft.webmagic.samples.hkbc.model.HKPicImg;
 import us.codecraft.webmagic.samples.hkbc.model.HKssttPcTopic;
 import us.codecraft.webmagic.samples.hkbc.processor.HKBCNormal_TopicProcessor;
 import us.codecraft.webmagic.samples.hkbc.model.HKssxsPcTopic;
@@ -88,7 +90,32 @@ public class HKDao {
             e.printStackTrace();
         }
     }
+    /**
+     * pc端色色贴图的图片
+     *
+     * @param list
+     */
+    public static void insertImg_SSTTContent(List<HKPicImg> list) {
+        if (list == null || list.size() <= 0) {
+            MyLogger.logger.error("没有数据要保存 ：{}", list);
+            return;
+        }
 
+        QueryRunner qr = new QueryRunner(Jdbcutils.getDataSource());
+        String sql = "insert into pc_sstt_img (aid,src,topicid) values(?,?,?)";
+        Object[][] params = new Object[list.size()][3];
+        for (int i = 0; i < list.size(); i++) {
+            params[i][0] = list.get(i).getAid();
+            params[i][1] = list.get(i).getSrc();
+            params[i][2] = list.get(i).getTopicId();
+        }
+        try {
+            int[] batch = qr.batch(sql, params);
+            MyLogger.logger.info("插入结果：{}", Arrays.toString(batch));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static List<HKssxsPcTopic> queryKeywordInSsxs(String key) {
 

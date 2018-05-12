@@ -1,6 +1,7 @@
 package us.codecraft.webmagic.samples.hkbc;
 
 import us.codecraft.webmagic.Spider;
+import us.codecraft.webmagic.samples.hkbc.cache.TopicCache;
 import us.codecraft.webmagic.samples.hkbc.dao.HKDao;
 import us.codecraft.webmagic.samples.hkbc.model.HKssttPcTopic;
 import us.codecraft.webmagic.samples.hkbc.pipline.HKHGame_TopicsPipLine;
@@ -37,38 +38,43 @@ public class HKMainStart {
                 .run();
     }
 
+    static int curent_ssttTopicid = 1;
+
     /**
      * 抓取图片
      */
     public static void spSSTTContentPic() {
-        //2720
-        for (int i = 0; i < 10; i++) {
-            int start = i  + 1;
-            int count = 1;
-            List<HKssttPcTopic> topicsSSTT = HKDao.getTopicsSSTT(start, count);
-            if (topicsSSTT == null || topicsSSTT.size() <= 0) {
-                MyLogger.logger.warn("[{},{})没有查询结果", start, (start + count));
-                continue;
-            }
-            MyLogger.logger.info("准备抓取主题个数 {} ", topicsSSTT.size());
-            String[] urls = new String[topicsSSTT.size()];
-            for (int j = 0; j < topicsSSTT.size(); j++) {
-                urls[j] = topicsSSTT.get(j).getUrl();
-            }
-            Spider.create(new HKSSTT_ContentProcessor())
-                    .addUrl(urls)
-                    .setScheduler(new FileCacheQueueScheduler("./filecache/ssttPic/"))
-                    .addPipeline(new HKSSTT_ContentPipline())
-                    .thread(1)
-                    .run();
-
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        //每次查3个
+        final int count = 2;
+        List<HKssttPcTopic> topicsSSTT = HKDao.getTopicsSSTT(curent_ssttTopicid, count);
+        if (topicsSSTT == null || topicsSSTT.size() <= 0) {
+            MyLogger.logger.warn("[{},{})没有查询结果", curent_ssttTopicid, (curent_ssttTopicid + count));
         }
-
+        MyLogger.logger.info("准备抓取主题个数 {} ", topicsSSTT.size());
+        String[] urls = new String[topicsSSTT.size()];
+        for (int j = 0; j < topicsSSTT.size(); j++) {
+            urls[j] = topicsSSTT.get(j).getUrl();
+        }
+        TopicCache.getInstance().cacheTopic(topicsSSTT);
+        HKSSTT_ContentProcessor pageProcessor = new HKSSTT_ContentProcessor(new HKSSTT_ContentProcessor.onNextPage() {
+            @Override
+            public List<HKssttPcTopic> getNextPage() {
+                if (TopicCache.getInstance().getcachSize() < 100) {
+                    curent_ssttTopicid += count;//每次从上次查询结束的位置开始
+                    List<HKssttPcTopic> topicsSSTT = HKDao.getTopicsSSTT(curent_ssttTopicid, count);
+                    TopicCache.getInstance().cacheTopic(topicsSSTT);
+                    MyLogger.logger.info("准备抓取主题个数 {} ", topicsSSTT != null ? topicsSSTT.size() : null);
+                    return topicsSSTT;
+                }
+                return null;
+            }
+        });
+        Spider.create(pageProcessor)
+                .addUrl(urls)
+                .setScheduler(new FileCacheQueueScheduler("./filecache/ssttPic/"))
+                .addPipeline(new HKSSTT_ContentPipline())
+                .thread(1)
+                .run();
     }
 
 

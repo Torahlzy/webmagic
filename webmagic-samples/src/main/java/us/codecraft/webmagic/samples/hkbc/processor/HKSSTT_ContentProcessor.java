@@ -4,7 +4,10 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.samples.hkbc.MyLogger;
+import us.codecraft.webmagic.samples.hkbc.cache.TopicCache;
+import us.codecraft.webmagic.samples.hkbc.model.HKBaseTopic;
 import us.codecraft.webmagic.samples.hkbc.model.HKPicImg;
+import us.codecraft.webmagic.samples.hkbc.model.HKssttPcTopic;
 import us.codecraft.webmagic.selector.Selectable;
 
 import java.util.ArrayList;
@@ -13,28 +16,46 @@ import java.util.List;
 public class HKSSTT_ContentProcessor implements PageProcessor {
 
     private Site site = Site.me().setRetryTimes(3).setSleepTime(1000);
+    onNextPage nextPage;
+
+    public HKSSTT_ContentProcessor(onNextPage nextPage) {
+        this.nextPage = nextPage;
+    }
 
     @Override
     public void process(Page page) {
-        //下一页
-//        page.addTargetRequests(page.getHtml().xpath("//*[@id=\"fd_page_bottom\"]/div/a").links().all());
-        //主题
-        ////*[@id="postmessage_106088142"]/ignore_js_op
-        Selectable xpath = page.getHtml().xpath("//div[@id=\"postlist\"]/div[1]/table/tbody/tr[1]/td[2]//ignore_js_op//img/@id");
-        List<String> img_aid = xpath.all();
-        List<String> img_src = page.getHtml().xpath("//div[@id=\"postlist\"]/div[1]/table/tbody/tr[1]/td[2]//ignore_js_op//img/@zoomfile").all();
+        //获取下一个页面的地址
+        List<HKssttPcTopic> nextPage = this.nextPage.getNextPage();
+        if (nextPage != null && nextPage.size() > 0) {
+            List<String> urls = new ArrayList<String>();
+            for (int i = 0; i < nextPage.size(); i++) {
+                urls.add(nextPage.get(i).getUrl());
+            }
+            page.addTargetRequests(urls);
+        }
+        //获得图片
+        Selectable jsop = page.getHtml().xpath("//div[@id=\"postlist\"]/div[1]/table/tbody/tr[1]/td[2]//ignore_js_op");
+        Selectable imgs = jsop.xpath("//img[@zoomfile]");
+        Selectable idxpath = imgs.xpath("/@id");
+        List<String> img_aid = idxpath.all();
+        List<String> img_src = page.getHtml().xpath("//div[@id=\"postlist\"]/div[1]/table/tbody/tr[1]/td[2]//ignore_js_op//img[@zoomfile]/@zoomfile").all();
         MyLogger.logger.info("找到图片 {} 个", (img_aid != null ? img_aid.size() : 0));
         parserTopic(page, img_aid, img_src);
+
     }
 
     protected void parserTopic(Page page, List<String> img_aid, List<String> img_src) {
         if (img_aid != null && img_aid.size() > 0) {
             List<HKPicImg> topicsList = new ArrayList<HKPicImg>(img_aid.size());
+            HKBaseTopic topic = TopicCache.getInstance().pop(page.getUrl().toString());
+
             for (int i = 0; i < img_aid.size(); i++) {
                 String idstr = img_aid.get(i);
                 String src = img_src.get(i);
-                    HKPicImg imgObj = HKPicImg.create(idstr, src);
-                    topicsList.add(imgObj);
+                HKPicImg imgObj = HKPicImg.create(idstr, src);
+                imgObj.setTopicId(topic.getId());
+                imgObj.setTopicTitle(topic.getTitle());
+                topicsList.add(imgObj);
             }
             page.putField("imgList", topicsList);
         } else {
@@ -69,5 +90,9 @@ public class HKSSTT_ContentProcessor implements PageProcessor {
                 .addHeader("Connection", "keep-alive")
                 .addHeader("Host", "www.hkbbcc.xyz");
         return site;
+    }
+
+    public interface onNextPage {
+        List<HKssttPcTopic> getNextPage();
     }
 }

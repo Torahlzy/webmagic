@@ -1,6 +1,6 @@
 package us.codecraft.webmagic.samples.hkbc.model;
 
-public abstract class HKBaseTopic {
+public abstract class HKBaseTopic extends BaseModel {
     protected String title;//标题
     protected String url;//网址全部
 
