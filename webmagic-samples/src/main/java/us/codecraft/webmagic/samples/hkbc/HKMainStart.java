@@ -41,7 +41,7 @@ public class HKMainStart {
     static int curent_ssttTopicid = 1;
 
     /**
-     * 抓取图片
+     * 抓取图片地址
      */
     public static void spSSTTContentPic() {
         //每次查3个
@@ -63,7 +63,7 @@ public class HKMainStart {
                     curent_ssttTopicid += count;//每次从上次查询结束的位置开始
                     List<HKssttPcTopic> topicsSSTT = HKDao.getTopicsSSTT(curent_ssttTopicid, count);
                     TopicCache.getInstance().cacheTopic(topicsSSTT);
-                    MyLogger.logger.info("准备抓取主题个数 {} ", topicsSSTT != null ? topicsSSTT.size() : null);
+                    MyLogger.logger.info("准备添加主题个数 {} ", topicsSSTT != null ? topicsSSTT.size() : null);
                     return topicsSSTT;
                 }
                 return null;

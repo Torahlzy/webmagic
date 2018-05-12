@@ -55,6 +55,9 @@ public class HKPicImg extends BaseModel {
         this.src = src;
     }
 
+    public HKPicImg() {
+    }
+
     @Override
     public String toString() {
         return "HKPicImg{" +

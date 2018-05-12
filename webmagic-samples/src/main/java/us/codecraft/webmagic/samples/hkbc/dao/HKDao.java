@@ -90,6 +90,7 @@ public class HKDao {
             e.printStackTrace();
         }
     }
+
     /**
      * pc端色色贴图的图片
      *
@@ -152,6 +153,50 @@ public class HKDao {
             List<HKssttPcTopic> result = qr.query(sql,
                     new BeanListHandler<HKssttPcTopic>(HKssttPcTopic.class));
             return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * @param minid 包含
+     * @param count
+     * @return
+     */
+    public static List<HKPicImg> getPicUrl(int minid, int count) {
+
+        //第一步：创建queryRunner对象，用来操作sql语句
+        QueryRunner qr = new QueryRunner(Jdbcutils.getDataSource());
+
+        //第二步：创建sql语句
+        String sql = "SELECT * FROM pc_sstt_img where id < " + (minid + count) + " and id >= " + minid;
+
+        try {
+            List<HKPicImg> result = qr.query(sql,
+                    new BeanListHandler<HKPicImg>(HKPicImg.class));
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public static HKssttPcTopic getSsttByTopicId(int topicid) {
+
+        //第一步：创建queryRunner对象，用来操作sql语句
+        QueryRunner qr = new QueryRunner(Jdbcutils.getDataSource());
+
+        //第二步：创建sql语句
+        String sql = "SELECT * FROM pc_sstt_topic where id = ?";
+
+        try {
+            List<HKssttPcTopic> result = qr.query(sql,
+                    new BeanListHandler<HKssttPcTopic>(HKssttPcTopic.class), topicid);
+            if (result != null && result.size() > 0) {
+                return result.get(0);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
