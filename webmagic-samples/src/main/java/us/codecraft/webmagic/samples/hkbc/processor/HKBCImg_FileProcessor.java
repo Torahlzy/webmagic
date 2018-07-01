@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class HKBCImg_FileProcessor implements PageProcessor {
 
-    private Site site = Site.me().setRetryTimes(3).setSleepTime(1000);
+    private Site site = Site.me().setRetryTimes(3).setSleepTime(10);
     OnNextUrl nextPage;
 
     public HKBCImg_FileProcessor(OnNextUrl nextPage) {

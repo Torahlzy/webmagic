@@ -9,6 +9,5 @@ public class HKSSTT_TopicsPipline extends HKTopicsPipLine<HKssttPcTopic> {
     @Override
     protected void insertDao(List<HKssttPcTopic> list) {
         HKDao.insertSSTTPcTopics(list);
-
     }
 }

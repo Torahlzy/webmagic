@@ -92,6 +92,32 @@ public class HKDao {
     }
 
     /**
+     * pc端HCG
+     *
+     * @param list
+     */
+    public static void insertHCGPcTopics(List<HKssxsPcTopic> list) {
+        if (list == null || list.size() <= 0) {
+            HKBCNormal_TopicProcessor.logger.error("没有数据要保存 ：{}", list);
+            return;
+        }
+
+        QueryRunner qr = new QueryRunner(Jdbcutils.getDataSource());
+        String sql = "insert into pc_hcg_topic (title,url) values(?,?)";
+        Object[][] params = new Object[list.size()][2];
+        for (int i = 0; i < list.size(); i++) {
+            params[i][0] = list.get(i).getTitle();
+            params[i][1] = list.get(i).getUrl();
+        }
+        try {
+            int[] batch = qr.batch(sql, params);
+            HKBCNormal_TopicProcessor.logger.info("插入结果：{}", Arrays.toString(batch));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * pc端色色贴图的图片
      *
      * @param list

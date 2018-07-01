@@ -16,13 +16,13 @@ public class PicStart {
         spSSPics();
     }
 
-    static int currentPicId = 4011;
+    static int currentPicId = 4344;
 
     /**
      * 抓取图片地址
      */
     public static void spSSPics() {
-        final int count = 5;
+        final int count = 100;
         List<HKPicImg> picUrl = HKDao.getPicUrl(currentPicId, count);
         String[] urls = new String[picUrl.size()];
         for (int i = 0; i < picUrl.size(); i++) {
@@ -32,7 +32,7 @@ public class PicStart {
         Spider.create(new HKBCImg_FileProcessor(new OnNextUrl() {
             @Override
             public List<String> getNextUrl() {
-                if (ImgCache.getInstance().getcachSize() < 100) {
+                if (ImgCache.getInstance().getcachSize() < 1000) {
                     currentPicId += count;
                     List<HKPicImg> picUrl = HKDao.getPicUrl(currentPicId, count);
                     List<String> urls = new ArrayList<String>();
@@ -48,7 +48,7 @@ public class PicStart {
                 .addUrl(urls)
                 .setScheduler(new FileCacheQueueScheduler("./filecache/ssttImgFile/"))
                 .addPipeline(new ImgFilePipLine())
-                .thread(1)
+                .thread(5)
                 .run();
     }
 }

@@ -4,10 +4,7 @@ import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.samples.hkbc.cache.TopicCache;
 import us.codecraft.webmagic.samples.hkbc.dao.HKDao;
 import us.codecraft.webmagic.samples.hkbc.model.HKssttPcTopic;
-import us.codecraft.webmagic.samples.hkbc.pipline.HKHGame_TopicsPipLine;
-import us.codecraft.webmagic.samples.hkbc.pipline.HKSSTT_ContentPipline;
-import us.codecraft.webmagic.samples.hkbc.pipline.HKSSTT_TopicsPipline;
-import us.codecraft.webmagic.samples.hkbc.pipline.HKSSXS_TopicsPipLine;
+import us.codecraft.webmagic.samples.hkbc.pipline.*;
 import us.codecraft.webmagic.samples.hkbc.processor.HKBCNormal_TopicProcessor;
 import us.codecraft.webmagic.samples.hkbc.processor.HKBCPic_TopicProcessor;
 import us.codecraft.webmagic.samples.hkbc.processor.HKSSTT_ContentProcessor;
@@ -22,7 +19,7 @@ public class HKMainStart {
 //        spSSXSTopic();
 //        spHGameTopic();
 //        spSSTTTopic();
-        spSSTTContentPic();
+        spHCGTopic();
     }
 
     /**
@@ -32,12 +29,21 @@ public class HKMainStart {
         Spider.create(new HKBCPic_TopicProcessor())
                 .addUrl("http://www.hkbbcc.xyz/forum.php?mod=forumdisplay&fid=18&page=1")
                 .setScheduler(new FileCacheQueueScheduler("./filecache/sstt/"))
-//                .addPipeline(new FilePipeline("./spresult/"))
                 .addPipeline(new HKSSTT_TopicsPipline())
                 .thread(1)
                 .run();
     }
-
+    /**
+     * hcg
+     */
+    private static void spHCGTopic() {
+        Spider.create(new HKBCNormal_TopicProcessor())
+                .addUrl("http://www.hkbbcc.xyz/forum-66-1.html")
+                .setScheduler(new FileCacheQueueScheduler("./filecache/hcg/"))
+                .addPipeline(new HKHCG_TopicsPipline())
+                .thread(1)
+                .run();
+    }
     static int curent_ssttTopicid = 1;
 
     /**
